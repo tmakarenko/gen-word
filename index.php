@@ -1,17 +1,29 @@
 <?php
 require_once './vendor/autoload.php';
-require_once './FileGenService.php';
+use classes\Services\FileGenService;
+use \Symfony\Component\Dotenv\Dotenv;
+use \Doctrine\DBAL\DriverManager;
 
-$fs = new FileGenService();
-
-$pw = new \PhpOffice\PhpWord\PhpWord();
-
-$section = $pw->addSection();
-$section->addText(
-    '"Learn from yesterday, live for today, hope for tomorrow. '
-    . 'The important thing is not to stop questioning." '
-    . '(Albert Einstein)'
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
+$conn = array(
+    'dbname' => $_ENV['DB_NAME'],
+    'user' => $_ENV['DB_USER'],
+    'password' => $_ENV['DB_PASS'],
+    'host' => $_ENV['DB_HOST'],
+    'driver' => $_ENV['DB_DRIVER'],
 );
 
-$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($pw, 'Word2007');
-$objWriter->save('./docs/helloWorld.docx');
+$conn = DriverManager::getConnection($conn);
+$qb = $conn->createQueryBuilder();
+$tasks = $qb->select('*')
+    ->from('srv.get_list_task(1)')
+    ->execute()
+    ->fetchAll(\Doctrine\DBAL\FetchMode::ASSOCIATIVE);
+
+
+$fs = new FileGenService();
+$fs->setTasks($tasks);
+$fs->save();
+//$fs->setParams('fullName', 'Кирилиця Кирилиця Ко');
+//$fs->save('./docs/helloWorld.docx');
