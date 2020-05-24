@@ -16,12 +16,15 @@ class FileGenService
 
     public function setTasks($tasks = []){
         $this->phpWord->cloneBlock('block_task', 0, true, false, $tasks);
+    }
+
+    public function setTask($tasks = []){
+        $this->phpWord->cloneBlock('block_task', 0, true, false, $tasks);
 
     }
 
     function setParams($paramName = '', $paramValue = ''){
         $this->phpWord->setValue($paramName, $paramValue);
-        $this->phpWord->saveAs('./docs/helloWorld.docx');
     }
     function save(){
         $this->phpWord->saveAs('./docs/helloWorld.docx');

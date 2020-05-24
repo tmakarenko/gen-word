@@ -3,6 +3,7 @@ require_once './vendor/autoload.php';
 use classes\Services\FileGenService;
 use \Symfony\Component\Dotenv\Dotenv;
 use \Doctrine\DBAL\DriverManager;
+use classes\Services\GetData;
 
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
@@ -16,12 +17,12 @@ $conn = array(
 
 $conn = DriverManager::getConnection($conn);
 $qb = $conn->createQueryBuilder();
-$tasks = $qb->select('*')
-    ->from('srv.get_list_task(1)')
-    ->execute()
-    ->fetchAll(\Doctrine\DBAL\FetchMode::ASSOCIATIVE);
 
-
+$gd = new GetData($conn);
+$tasks = $gd->getTaskListObject(1);
+foreach ($tasks as $key => $task){
+    $tasks[$key]['questions'] = $gd->getQuestionListByTask($task['task_id']);
+}
 $fs = new FileGenService();
 $fs->setTasks($tasks);
 $fs->save();
