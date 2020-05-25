@@ -18,8 +18,9 @@ class FileGenService
         $this->phpWord->cloneBlock('block_task', 0, true, false, $tasks);
     }
 
-    public function setTask($tasks = []){
-        $this->phpWord->cloneBlock('block_task', 0, true, false, $tasks);
+    public function setTask($task = [], $q = []){
+        $this->phpWord->cloneBlock('block_task', 0, true, false, [$task]);
+        $this->phpWord->cloneBlock('block_q', 0, true, false, $q);
 
     }
 

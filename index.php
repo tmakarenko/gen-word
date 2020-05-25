@@ -20,11 +20,12 @@ $qb = $conn->createQueryBuilder();
 
 $gd = new GetData($conn);
 $tasks = $gd->getTaskListObject(1);
-foreach ($tasks as $key => $task){
-    $tasks[$key]['questions'] = $gd->getQuestionListByTask($task['task_id']);
-}
+$q = [];
 $fs = new FileGenService();
-$fs->setTasks($tasks);
+foreach ($tasks as $key => $task){
+    $q[$task['task_id']] = $gd->getQuestionListByTask($task['task_id']);
+    $fs->setTask($tasks[$key], $q[$task['task_id']]);
+}
 $fs->save();
 //$fs->setParams('fullName', 'Кирилиця Кирилиця Ко');
 //$fs->save('./docs/helloWorld.docx');
