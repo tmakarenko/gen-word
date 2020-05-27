@@ -1,10 +1,18 @@
 <?php
 require_once './vendor/autoload.php';
 use classes\Services\FileGenService;
+use PhpOffice\PhpWord\TemplateProcessor;
 use \Symfony\Component\Dotenv\Dotenv;
 use \Doctrine\DBAL\DriverManager;
 use classes\Services\GetData;
 
+//$loader = new \Twig\Loader\FilesystemLoader('./twig/tpl');
+//$twig = new \Twig\Environment($loader, [
+//    'cache' => './tpl_c',
+//]);
+//$tr = new \App\TwigRenderer();
+
+define('STUD_EXAM_ID', 1);
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
 $conn = array(
@@ -19,13 +27,14 @@ $conn = DriverManager::getConnection($conn);
 $qb = $conn->createQueryBuilder();
 
 $gd = new GetData($conn);
-$tasks = $gd->getTaskListObject(1);
+$userInfo = $gd->getUserInfo(STUD_EXAM_ID);
+$tasks = $gd->getTaskListObject(STUD_EXAM_ID);
 $q = [];
 $fs = new FileGenService();
 foreach ($tasks as $key => $task){
-    $q[$task['task_id']] = $gd->getQuestionListByTask($task['task_id']);
-    $fs->setTask($tasks[$key], $q[$task['task_id']]);
+
+    $tasks[$key]['q_text'] = $gd->getQuestionListByTask($task['task_id'], STUD_EXAM_ID, true);
 }
+$fs->setUserInfo($userInfo);
+$fs->setTasks($tasks);
 $fs->save();
-//$fs->setParams('fullName', 'Кирилиця Кирилиця Ко');
-//$fs->save('./docs/helloWorld.docx');

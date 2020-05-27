@@ -3,7 +3,8 @@
         "phpoffice/phpword": "^0.17.0",
         "doctrine/orm": "^2.7",
         "symfony/dotenv": "^5.0",
-        "symfony/var-dumper": "^5.0"
+        "symfony/var-dumper": "^5.0",
+        "twig/twig": "^3.0"
     },
     "autoload": {
         "psr-4": {
